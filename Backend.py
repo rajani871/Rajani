@@ -1,39 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,9 +160,18 @@ function calculate() {
     let area = parseInt(document.getElementById("area").value);
     let wage = parseInt(document.getElementById("wage").value);
     let cost = parseInt(document.getElementById("cost").value);
+    let floorsText = document.getElementById("floors").value;
+
+    // Extract number of floors (G+2 → 3)
+    let floors = floorsText.includes("+")
+        ? parseInt(floorsText.split("+")[1]) + 1
+        : 1;
 
     let workers = Math.max(6, Math.floor(area / 180));
-    let days = 84;
+
+    // 🔥 Dynamic timeline calculation
+    let productivityPerWorker = 12; // sq yards per day
+    let days = Math.ceil((area / (workers * productivityPerWorker)) * floors);
 
     let labourCost = workers * wage * days;
     let materialCost = area * cost;
@@ -213,9 +186,10 @@ function calculate() {
     document.getElementById("carpenters").innerText = Math.floor(workers * 0.15);
     document.getElementById("steel").innerText = Math.floor(workers * 0.15);
 
+    // ✅ Timeline now updates correctly
     document.getElementById("tDays").innerText = days;
-    document.getElementById("tWeeks").innerText = Math.floor(days / 7);
-    document.getElementById("tMonths").innerText = Math.floor(days / 30);
+    document.getElementById("tWeeks").innerText = Math.ceil(days / 7);
+    document.getElementById("tMonths").innerText = (days / 30).toFixed(1);
 
     document.getElementById("labourCost").innerText = labourCost;
     document.getElementById("materialCost").innerText = materialCost;
@@ -231,41 +205,6 @@ function calculate() {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 from flask import Flask, request, jsonify
